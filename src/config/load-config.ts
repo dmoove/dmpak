@@ -73,10 +73,11 @@ export async function loadDmpakConfig(
 
         // eslint-disable-next-line no-await-in-loop
         const { tsImport } = await import('tsx/esm/api');
-        // tsx handles absolute paths correctly on all platforms, so using the
-        // resolved path avoids issues with duplicated extensions on Windows.
+        // Node <18.19 requires file:// URLs on Windows; using the resolved path
+        // on other platforms avoids duplicated extensions.
+        const specifier = process.platform === 'win32' ? fileUrl : path;
         // eslint-disable-next-line no-await-in-loop
-        const imported = await tsImport(path, import.meta.url);
+        const imported = await tsImport(specifier, import.meta.url);
         rawConfig = imported.default?.default ?? imported.default ?? imported;
       } else {
         // eslint-disable-next-line no-await-in-loop
