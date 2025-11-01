@@ -24,3 +24,24 @@ jobs:
       - run: pnpm install
       - run: pnpm run build
       - run: pnpm run test
+
+  cli-init:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+          run_install: false
+      - run: pnpm install
+      - run: pnpm run build
+      - name: run dmpak init
+        run: |
+          mkdir test-project
+          cd test-project
+          node ../bin/run.js init -f -t ts-lib
+          test -f .dmpakrc.ts

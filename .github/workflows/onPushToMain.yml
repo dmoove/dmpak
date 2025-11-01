@@ -2,11 +2,15 @@
 name: version, tag and github release
 
 on:
-  push:
+  workflow_run:
+    workflows: ["tests"]
     branches: [main]
+    types:
+      - completed
 
 jobs:
   release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
       actions: write
