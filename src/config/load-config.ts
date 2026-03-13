@@ -85,7 +85,7 @@ export async function loadDmpakConfig(
         rawConfig = imported.default ?? imported;
       }
     } catch (error) {
-      throw new Error(`Failed to load ${filename}: ${error}`);
+      throw new Error(`Failed to load ${filename}`, { cause: error });
     }
 
     const parseResult = dmpakConfigSchema.safeParse(rawConfig);

@@ -38,6 +38,8 @@ export class EslintGenerator extends ToolGenerator {
    * Write ESLint configuration and update dependencies.
    */
   async generate(config: GeneratorConfig): Promise<void> {
+    this.dryRun = config.dryRun ?? false;
+
     const toolCfg = this.getToolConfig(config);
     const isObj = typeof toolCfg === 'object' && toolCfg !== null;
 

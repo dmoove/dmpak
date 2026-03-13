@@ -12,7 +12,7 @@ import { CdkCommon } from './cdk-common.js';
 export class CdkAppGenerator extends CdkCommon {
   name = 'cdk-app';
 
-  constructor(projectRoot: string, pkg?: PackageJsonGenerator) {
+  constructor(projectRoot: string, pkg: PackageJsonGenerator) {
     super(projectRoot, pkg);
     this.addCdkAppScripts();
   }
@@ -21,7 +21,16 @@ export class CdkAppGenerator extends CdkCommon {
    * Create the CDK app structure and project files.
    */
   async generate(config: GeneratorConfig): Promise<void> {
+    this.dryRun = config.dryRun ?? false;
+
     const name = config.projectName || 'cdk-app';
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+      throw new Error(
+        `Invalid projectName "${name}": only letters, digits, hyphens, and underscores are allowed.`
+      );
+    }
+
     const pascal = pascalCase(name);
 
     await this.writeJsonFile('cdk.json', {
@@ -92,10 +101,10 @@ Generated with \`dmpak init --type cdk-app\`.
   }
 
   private addCdkAppScripts(): void {
-    this.pkg?.addScript('synth', 'cdk synth');
-    this.pkg?.addScript('deploy', 'cdk deploy');
-    this.pkg?.addScript('diff', 'cdk diff');
-    this.pkg?.addScript('destroy', 'cdk destroy');
+    this.pkg.addScript('synth', 'cdk synth');
+    this.pkg.addScript('deploy', 'cdk deploy');
+    this.pkg.addScript('diff', 'cdk diff');
+    this.pkg.addScript('destroy', 'cdk destroy');
   }
 
   private async ensureDirs(dirs: string[]): Promise<void> {

@@ -6,6 +6,17 @@ import { join } from 'node:path';
 import { GitGenerator } from '../../src/generators/git/git-generator.js';
 
 describe('GitGenerator', () => {
+  it('does not initialize git when dryRun is true', async () => {
+    const dir = await fs.mkdtemp(join(tmpdir(), 'dmpak-git-'));
+    const gen = new GitGenerator(dir);
+
+    await gen.generate({ dryRun: true, isInit: true, projectName: 'demo', projectType: 'ts-lib', tools: {} });
+
+    const gitDir = join(dir, '.git');
+    expect(await fs.stat(gitDir).catch(() => null)).to.equal(null);
+  });
+
+
   it('creates .gitignore and initializes repo during init', async () => {
     const dir = await fs.mkdtemp(join(tmpdir(), 'dmpak-git-'));
     const gen = new GitGenerator(dir);

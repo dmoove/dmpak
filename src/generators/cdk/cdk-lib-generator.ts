@@ -15,6 +15,8 @@ export class CdkLibGenerator extends CdkCommon {
    * Create the construct library structure and update dependencies.
    */
   async generate(config: GeneratorConfig): Promise<void> {
+    this.dryRun = config.dryRun ?? false;
+
     const name = config.projectName || 'cdk-lib';
     const pascal = pascalCase(name);
 

@@ -9,6 +9,25 @@ import { CdkLibGenerator } from '../../src/generators/cdk/cdk-lib-generator.js';
 import { PackageJsonGenerator } from '../../src/generators/package-json/package-json-generator.js';
 
 describe('CdkGenerator', () => {
+  it('rejects a projectName containing shell metacharacters', async () => {
+    const dir = await fs.mkdtemp(join(tmpdir(), 'dmpak-cdkapp-'));
+    const pkg = new PackageJsonGenerator(dir);
+    const gen = new CdkAppGenerator(dir, pkg);
+
+    try {
+      await gen.generate({
+        projectName: '$(evil)',
+        projectType: 'cdk-app',
+        tools: {},
+      });
+      expect.fail('should have thrown');
+    } catch (error: unknown) {
+      expect(error).to.be.instanceOf(Error);
+      expect((error as Error).message).to.include('Invalid projectName');
+    }
+  });
+
+
   it('creates app files and dependencies for cdk-app', async () => {
     const dir = await fs.mkdtemp(join(tmpdir(), 'dmpak-cdkapp-'));
     const pkg = new PackageJsonGenerator(dir);

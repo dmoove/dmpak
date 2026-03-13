@@ -16,7 +16,7 @@ export const JEST_TYPES_VERSION = '^29.5.4';
 export abstract class CdkCommon extends ToolGenerator {
   constructor(
     projectRoot: string,
-    protected readonly pkg?: PackageJsonGenerator
+    protected readonly pkg: PackageJsonGenerator
   ) {
     super(projectRoot);
     this.setupDependencies();
@@ -24,22 +24,22 @@ export abstract class CdkCommon extends ToolGenerator {
   }
 
   protected addDevDependencies(): void {
-    this.pkg?.addDevDependency('typescript', TYPESCRIPT_VERSION);
-    this.pkg?.addDevDependency('ts-node', TS_NODE_VERSION);
-    this.pkg?.addDevDependency('@types/node', NODE_TYPES_VERSION);
-    this.pkg?.addDevDependency('jest', JEST_VERSION);
-    this.pkg?.addDevDependency('ts-jest', TS_JEST_VERSION);
-    this.pkg?.addDevDependency('@types/jest', JEST_TYPES_VERSION);
+    this.pkg.addDevDependency('typescript', TYPESCRIPT_VERSION);
+    this.pkg.addDevDependency('ts-node', TS_NODE_VERSION);
+    this.pkg.addDevDependency('@types/node', NODE_TYPES_VERSION);
+    this.pkg.addDevDependency('jest', JEST_VERSION);
+    this.pkg.addDevDependency('ts-jest', TS_JEST_VERSION);
+    this.pkg.addDevDependency('@types/jest', JEST_TYPES_VERSION);
   }
 
   protected addPeerDependencies(): void {
-    this.pkg?.addPeerDependency('aws-cdk-lib', AWS_CDK_VERSION);
-    this.pkg?.addPeerDependency('constructs', CONSTRUCTS_VERSION);
+    this.pkg.addPeerDependency('aws-cdk-lib', AWS_CDK_VERSION);
+    this.pkg.addPeerDependency('constructs', CONSTRUCTS_VERSION);
   }
 
   protected addRuntimeDependencies(): void {
-    this.pkg?.addDependency('aws-cdk-lib', AWS_CDK_VERSION);
-    this.pkg?.addDependency('constructs', CONSTRUCTS_VERSION);
+    this.pkg.addDependency('aws-cdk-lib', AWS_CDK_VERSION);
+    this.pkg.addDependency('constructs', CONSTRUCTS_VERSION);
   }
 
   private setupDependencies(): void {
@@ -48,7 +48,7 @@ export abstract class CdkCommon extends ToolGenerator {
   }
 
   private setupScripts(): void {
-    this.pkg?.addScript('build', 'tsc');
-    this.pkg?.addScript('test', 'jest');
+    this.pkg.addScript('build', 'tsc');
+    this.pkg.addScript('test', 'jest');
   }
 }

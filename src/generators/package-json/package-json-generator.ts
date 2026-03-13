@@ -46,6 +46,8 @@ export class PackageJsonGenerator extends ToolGenerator {
    * Generate the `package.json` file based on collected information.
    */
   async generate(config: GeneratorConfig): Promise<void> {
+    this.dryRun = config.dryRun ?? false;
+
     const base = getBaseFields(config);
     const scripts = { ...this.scripts, ...config.scripts } as Record<string, string>;
     const exports = getExportFields(config);

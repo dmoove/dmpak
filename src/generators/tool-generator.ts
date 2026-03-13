@@ -16,6 +16,8 @@ export const DEFAULT_IGNORE_ENTRIES = [
  * Configuration passed to each generator.
  */
 export interface GeneratorConfig extends DmpakConfig {
+  /** When true, log what would be written without actually writing any files */
+  dryRun?: boolean;
   exports?: {
     exports?: Record<string, unknown>;
     files?: string[];
@@ -34,6 +36,9 @@ export interface GeneratorConfig extends DmpakConfig {
  * Base class for all generators.
  */
 export abstract class ToolGenerator {
+  /** Set to true during a dry-run to suppress file writes. */
+  protected dryRun = false;
+
   abstract name: string;
 
   constructor(protected readonly projectRoot: string) {}
@@ -61,6 +66,11 @@ export abstract class ToolGenerator {
     ...entries: string[]
   ): Promise<void> {
     const path = resolve(this.projectRoot, filename);
+
+    if (this.dryRun) {
+      console.log(`[dry-run] would write ${path}`);
+      return;
+    }
 
     const existing = existsSync(path) ? await readFile(path, 'utf8') : '';
 
@@ -124,6 +134,12 @@ export abstract class ToolGenerator {
     data: unknown
   ): Promise<void> {
     const path = resolve(this.projectRoot, filename);
+
+    if (this.dryRun) {
+      console.log(`[dry-run] would write ${path}`);
+      return;
+    }
+
     await writeFile(path, JSON.stringify(data, null, 2) + '\n', 'utf8');
   }
 
@@ -135,6 +151,12 @@ export abstract class ToolGenerator {
     content: string
   ): Promise<void> {
     const path = resolve(this.projectRoot, filename);
+
+    if (this.dryRun) {
+      console.log(`[dry-run] would write ${path}`);
+      return;
+    }
+
     await writeFile(path, content, 'utf8');
   }
 }

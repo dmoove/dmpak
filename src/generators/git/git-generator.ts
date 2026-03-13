@@ -14,6 +14,8 @@ export class GitGenerator extends ToolGenerator {
    * Generate git related files and optionally initialize a repository.
    */
   async generate(config: GeneratorConfig): Promise<void> {
+    this.dryRun = config.dryRun ?? false;
+
     const entries = [
       ...DEFAULT_IGNORE_ENTRIES,
       'tmp',
@@ -27,9 +29,18 @@ export class GitGenerator extends ToolGenerator {
 
     if (config.isInit) {
       const gitDir = resolve(this.projectRoot, '.git');
-      if (!existsSync(gitDir)) {
+      if (this.dryRun) {
+        console.log(`[dry-run] would run git init in ${this.projectRoot}`);
+      } else if (!existsSync(gitDir)) {
         const git = simpleGit(this.projectRoot);
-        await git.init();
+        try {
+          await git.init();
+        } catch (error) {
+          throw new Error(
+            `Failed to initialize git repository in ${this.projectRoot}`,
+            { cause: error }
+          );
+        }
       }
     }
   }

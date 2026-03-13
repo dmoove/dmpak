@@ -42,6 +42,8 @@ export class TsConfigGenerator extends ToolGenerator {
    * Generate the tsconfig file and register dependencies.
    */
   async generate(config: Partial<GeneratorConfig> = {}): Promise<void> {
+    this.dryRun = config.dryRun ?? false;
+
     const rawCfg = this.getToolConfig(config);
     const userCfg = ToolGenerator.isRecord(rawCfg) ? rawCfg : {};
     const merged = this.mergeConfig(userCfg);

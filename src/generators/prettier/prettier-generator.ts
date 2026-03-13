@@ -44,6 +44,8 @@ export class PrettierGenerator extends ToolGenerator {
    * Write Prettier configuration and update dependencies.
    */
   async generate(config: GeneratorConfig): Promise<void> {
+    this.dryRun = config.dryRun ?? false;
+
     const raw = config.tools?.prettier;
     const prettierCfg = ToolGenerator.isRecord(raw)
       ? this.getMergedConfig(raw)

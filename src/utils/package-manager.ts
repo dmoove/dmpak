@@ -19,7 +19,7 @@ export async function runInstall(packageManager: string): Promise<void> {
       proc.on('error', reject);
     });
   } catch (error: unknown) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+    if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
       throw new Error(
         `${packageManager} is not installed. Install it or set packageManager in your config.`
       );

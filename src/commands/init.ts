@@ -19,6 +19,10 @@ export default class Init extends Command {
       default: false,
       description: 'Overwrite existing configuration',
     }),
+    'no-install': Flags.boolean({
+      default: false,
+      description: 'Skip package manager installation after generating files',
+    }),
     type: Flags.string({
       char: 't',
       description: 'Project template type',
@@ -58,7 +62,9 @@ export default config;
     const generator = new ProjectGenerator({ ...config, isInit: true });
     await generator.generateAll();
 
-    await runInstall(config.packageManager ?? 'pnpm');
+    if (!flags['no-install']) {
+      await runInstall(config.packageManager ?? 'pnpm');
+    }
 
     this.log('🎉 Project initialized successfully!');
   }
