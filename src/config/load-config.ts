@@ -53,7 +53,6 @@ const CONFIG_FILES = [
 export async function loadDmpakConfig(
   cwd = process.cwd()
 ): Promise<DmpakConfig> {
-  let tsxRegistered = false;
   for (const filename of CONFIG_FILES) {
     const path = resolve(cwd, filename);
     if (!existsSync(path)) continue;
@@ -62,22 +61,18 @@ export async function loadDmpakConfig(
     let rawConfig: unknown;
 
     try {
-       
       if (filename.endsWith('.ts')) {
-        if (!tsxRegistered) {
-          // eslint-disable-next-line no-await-in-loop
-          const { register } = await import('tsx/esm/api');
-          register();
-          tsxRegistered = true;
-        }
-
+        // `tsImport` transpiles the file in an isolated loader, so we must NOT
+        // also call `register()` — doing both double-processes the specifier
+        // and duplicates the extension (`.ts.ts`). Always pass a file:// URL:
+        // on Windows a bare path's drive letter is parsed as a URL scheme, and
+        // with a global loader active POSIX paths get a `?namespace=` query
+        // appended to the literal filename (ENOENT). A file:// URL is parsed
+        // correctly on every platform.
         // eslint-disable-next-line no-await-in-loop
         const { tsImport } = await import('tsx/esm/api');
-        // Node <18.19 requires file:// URLs on Windows; using the resolved path
-        // on other platforms avoids duplicated extensions.
-        const specifier = process.platform === 'win32' ? fileUrl : path;
         // eslint-disable-next-line no-await-in-loop
-        const imported = await tsImport(specifier, import.meta.url);
+        const imported = await tsImport(fileUrl, import.meta.url);
         rawConfig = imported.default?.default ?? imported.default ?? imported;
       } else {
         // eslint-disable-next-line no-await-in-loop
